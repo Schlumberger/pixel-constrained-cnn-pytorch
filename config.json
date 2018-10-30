@@ -1,0 +1,21 @@
+{
+  "name": "celeba_model",
+  "dataset": "celeba",
+  "resize": 32,
+  "crop": 32,
+  "grayscale": false,
+  "batch_size": 64,
+  "constrained": true,
+  "num_colors": 32,
+  "filter_size": 5,
+  "depth": 18,
+  "num_filters_cond": 66,
+  "num_filters_prior": 66,
+  "lr": 4e-4,
+  "epochs": 20,
+  "mask_descriptor": ["random_rect", [12, 12]],
+  "num_conds": 4,
+  "num_samples": 64,
+  "weight_cond_logits_loss": 1.0,
+  "weight_prior_logits_loss": 0.0
+}
