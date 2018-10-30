@@ -32,7 +32,13 @@ This repo contains all code to reproduce the experiments in the paper as well as
 
 ## Usage
 
-To train a model, run `main.py config.json` (ensure that you have either the CelebA or MNIST dataset downloaded). To generate images using a trained model use `main_generate.py`. As an example, the following generates 64 completions for images 73 and 84 in the MNIST dataset by conditioning on the bottom 7 rows of those images. The model used to generate the completions is the trained MNIST model included in this repo and the results are saved to the `mnist_experiment` folder.
+To train a model, run (ensure that you have either the CelebA or MNIST dataset downloaded)
+
+```
+python main.py config.json
+```
+
+To generate images with a trained model use `main_generate.py`. As an example, the following command generates 64 completions for images 73 and 84 in the MNIST dataset by conditioning on the bottom 7 rows. The model used to generate the completions is the trained MNIST model included in this repo and the results are saved to the `mnist_experiment` folder.
 
 ```
 python main_generate.py -n mnist_experiment -m trained_models/mnist -t generation -i 73 84 -b 7 -ns 64
