@@ -42,10 +42,6 @@ class PixelCNNBaseClass(nn.Module):
         samples = samples.to(device)
         channels, height, width = self.img_size
 
-        if return_likelihood:
-            log_probs = torch.zeros(num_samples)
-            log_probs = log_probs.to(device)
-
         # Sample pixel intensities from a batch of probability distributions
         # for each pixel in each channel
         with torch.no_grad():
@@ -62,10 +58,6 @@ class PixelCNNBaseClass(nn.Module):
                         # model expects. Note that pixel_val has shape (batch, 1)
                         # so remove last dimension
                         samples[:, k, i, j] = pixel_val[:, 0].float() / (self.num_colors - 1)
-                        # Add log prob of current pixel
-                        if return_likelihood:
-                            # 1e-9 to avoid log(0)
-                            log_probs += torch.log(probs[:, pixel_val[:, 0], k, i, j][:, 0] + 1e-9)
 
         # Reset model to train mode
         self.train()
@@ -74,9 +66,52 @@ class PixelCNNBaseClass(nn.Module):
         samples = (samples * (self.num_colors - 1)).long()
 
         if return_likelihood:
-            return samples.cpu(), log_probs.cpu()
+            return samples.cpu(), self.log_likelihood(device, samples).cpu()
         else:
             return samples.cpu()
+
+    def log_likelihood(self, device, samples):
+        """Calculates log likelihood of samples under model.
+
+        Parameters
+        ----------
+        device : torch.device instance
+
+        samples : torch.Tensor
+            Batch of images. Shape (batch_size, num_channels, width, height).
+            Values should be integers in [0, self.prior_net.num_colors - 1].
+        """
+        # Set model to evaluation mode
+        self.eval()
+
+        num_samples, num_channels, height, width = samples.size()
+        log_probs = torch.zeros(num_samples)
+        log_probs = log_probs.to(device)
+
+        # Normalize samples before passing through model
+        norm_samples = samples.float() / (self.num_colors - 1)
+        # Calculate pixel probs according to the model
+        logits = self.forward(norm_samples)
+        # Note that probs has shape
+        # (batch, num_colors, channels, height, width)
+        probs = F.softmax(logits, dim=1)
+
+        # Calculate probability of each pixel
+        for i in range(height):
+            for j in range(width):
+                for k in range(num_channels):
+                    # Get the batch of true values at pixel (k, i, j)
+                    true_vals = samples[:, k, i, j]
+                    # Get probability assigned by model to true pixel
+                    probs_pixel = probs[:, true_vals, k, i, j][:, 0]
+                    # Add log probs (1e-9 to avoid log(0))
+                    log_probs += torch.log(probs_pixel + 1e-9)
+
+        # Reset model to train mode
+        self.train()
+
+        return log_probs
+
 
 
 class GatedPixelCNN(PixelCNNBaseClass):
@@ -212,7 +247,6 @@ class GatedPixelCNNRGB(PixelCNNBaseClass):
             nn.ReLU(True),
             MaskedConvRGB('B', 1023, self.num_colors * self.num_channels, (1, 1), stride=1, padding=0, bias=True)
         )
-
 
     def forward(self, x):
         # Restricted gated layer

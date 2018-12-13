@@ -71,10 +71,6 @@ class PixelConstrained(nn.Module):
         samples = samples.to(x_cond.device)
         num_colors = self.prior_net.num_colors
 
-        if return_likelihood:
-            log_probs = torch.zeros(num_samples)
-            log_probs = log_probs.to(x_cond.device)
-
         # Sample pixel intensities from a batch of probability distributions
         # for each pixel in each channel
         with torch.no_grad():
@@ -104,22 +100,6 @@ class PixelConstrained(nn.Module):
                         # conditioned on
                         samples[:, k, i, j][unmasked] = x_cond[:, k, i, j][unmasked]
 
-                        # Add log prob of current pixel
-                        if return_likelihood:
-                            if sample_pixel:
-                                # Probabilities for the given pixel
-                                probs_pixel = probs[:, pixel_val[:, 0], k, i, j][:, 0]
-                                # Set probabilities of unmasked pixels to 1 since
-                                # they are already known
-                                probs_pixel[unmasked] = 1.
-                            else:
-                                # If sample_pixel is False, all pixels in batch
-                                # are known, so all probabilities are 1
-                                probs_pixel = torch.ones(num_samples)
-                                probs_pixel = probs_pixel.to(x_cond.device)
-                            # Add log probs (1e-9 to avoid log(0))
-                            log_probs += torch.log(probs_pixel + 1e-9)
-
         # Reset model to train mode
         self.train()
 
@@ -127,10 +107,58 @@ class PixelConstrained(nn.Module):
         samples = (samples * (num_colors - 1)).long()
 
         if return_likelihood:
-            return samples.cpu(), log_probs.cpu()
+            return samples.cpu(), self.log_likelihood(samples, x_cond).cpu()
         else:
             return samples.cpu()
 
     def sample_unconditional(self, device, num_samples=16):
         """Samples from prior model without conditioning."""
         return self.prior_net.sample(device, num_samples)
+
+    def log_likelihood(self, samples, x_cond):
+        """Calculates log likelihood of samples under model.
+
+        Parameters
+        ----------
+        samples : torch.Tensor
+            Batch of images. Shape (batch_size, num_channels, width, height).
+            Values should be integers in [0, self.prior_net.num_colors - 1].
+
+        x_cond : torch.Tensor
+            Batch of conditional pixels.
+            Shape (batch_size, num_channels + 1, width, height).
+        """
+        # Set model to evaluation mode
+        self.eval()
+
+        num_samples, num_channels, height, width = samples.size()
+        log_probs = torch.zeros(num_samples)
+        log_probs = log_probs.to(x_cond.device)
+
+        # Normalize samples before passing through model
+        norm_samples = samples.float() / (self.prior_net.num_colors - 1)
+        # Calculate pixel probs according to the model
+        logits, _, _ = self.forward(norm_samples, x_cond)
+        # Note that probs has shape
+        # (batch, num_colors, channels, height, width)
+        probs = F.softmax(logits, dim=1)
+
+        # Calculate probability of each pixel
+        for i in range(height):
+            for j in range(width):
+                # The unmasked pixels are the ones where the mask is nonzero
+                unmasked = x_cond[:, -1, i, j] > 0
+                for k in range(num_channels):
+                    # Get the batch of true values at pixel (k, i, j)
+                    true_vals = samples[:, k, i, j]
+                    # Get probability assigned by model to true pixel
+                    probs_pixel = probs[:, true_vals, k, i, j][:, 0]
+                    # Conditional pixels are known, so set probs of these to 1
+                    probs_pixel[unmasked] = 1.
+                    # Add log probs (1e-9 to avoid log(0))
+                    log_probs += torch.log(probs_pixel + 1e-9)
+
+        # Reset model to train mode
+        self.train()
+
+        return log_probs
