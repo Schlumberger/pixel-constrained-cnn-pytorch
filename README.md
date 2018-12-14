@@ -6,29 +6,16 @@ This repo contains an implementation of Pixel Constrained CNN, a framework for p
 
 ## Examples
 
-<img src="https://github.com/Schlumberger/pixel-constrained-cnn-pytorch/raw/master/imgs/summary-gif.gif" width="500">
-
+<img src="https://github.com/Schlumberger/pixel-constrained-cnn-pytorch/raw/master/imgs/summary-gif.gif" width="600">
 <img src="https://github.com/Schlumberger/pixel-constrained-cnn-pytorch/raw/master/imgs/new-top-celeba.png" width="400">
-
 <img src="https://github.com/Schlumberger/pixel-constrained-cnn-pytorch/raw/master/imgs/new-left-celeba.png" width="400">
-
 <img src="https://github.com/Schlumberger/pixel-constrained-cnn-pytorch/raw/master/imgs/new-small-missing-celeba.png" width="400">
 
-<img src="https://github.com/Schlumberger/pixel-constrained-cnn-pytorch/raw/master/imgs/new-random-celeba.png" width="400">
-
-<img src="https://github.com/Schlumberger/pixel-constrained-cnn-pytorch/raw/master/imgs/new-bottom-celeba.png" width="400">
-
 <img src="https://github.com/Schlumberger/pixel-constrained-cnn-pytorch/raw/master/imgs/new-blob-samples.png" width="400">
-
 <img src="https://github.com/Schlumberger/pixel-constrained-cnn-pytorch/raw/master/imgs/new-bottom-seven-nine.png" width="400">
 
-<img src="https://github.com/Schlumberger/pixel-constrained-cnn-pytorch/raw/master/imgs/new-blob-samples-2.png" width="400">
-
 <img src="https://github.com/Schlumberger/pixel-constrained-cnn-pytorch/raw/master/imgs/int-dark-side.png" width="300">
-
 <img src="https://github.com/Schlumberger/pixel-constrained-cnn-pytorch/raw/master/imgs/int-eye-color.png" width="300">
-
-<img src="https://github.com/Schlumberger/pixel-constrained-cnn-pytorch/raw/master/imgs/int-male-female.png" width="300">
 
 ## Usage
 
@@ -72,6 +59,13 @@ If you find this work useful in your research, please cite using:
   year={2018}
 }
 ```
+
+## More examples
+
+<img src="https://github.com/Schlumberger/pixel-constrained-cnn-pytorch/raw/master/imgs/new-random-celeba.png" width="400">
+<img src="https://github.com/Schlumberger/pixel-constrained-cnn-pytorch/raw/master/imgs/new-bottom-celeba.png" width="400">
+<img src="https://github.com/Schlumberger/pixel-constrained-cnn-pytorch/raw/master/imgs/new-blob-samples-2.png" width="400">
+<img src="https://github.com/Schlumberger/pixel-constrained-cnn-pytorch/raw/master/imgs/int-male-female.png" width="300">
 
 ## License
 
