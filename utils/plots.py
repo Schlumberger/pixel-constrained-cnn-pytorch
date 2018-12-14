@@ -8,6 +8,8 @@ def probs_and_conditional_plot(img, probs, mask, cmap='plasma'):
     the original image overlayed. Note this function only works for binary
     images.
 
+    Parameters
+    ----------
     img : torch.Tensor
         Shape (1, H, W)
 

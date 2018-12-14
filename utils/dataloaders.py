@@ -43,7 +43,7 @@ def mnist(batch_size=128, num_colors=256, size=28,
 
 def celeba(batch_size=128, num_colors=256, size=64, crop=64, grayscale=False,
            shuffle=True, path_to_data='../celeba_64'):
-    """MNIST dataloader with (64, 64) images.
+    """CelebA dataloader with (64, 64) images.
 
     Parameters
     ----------

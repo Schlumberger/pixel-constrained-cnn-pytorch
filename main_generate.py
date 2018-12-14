@@ -42,12 +42,16 @@ parser.add_argument('-r', '--random', dest='random_attribute', default=None,
                     type=int, help='Number of random pixels to keep unmasked.')
 parser.add_argument('-b', '--bottom', dest='bottom_attribute', default=None,
                     type=int, help='Number of bottom pixels to keep unmasked.')
+parser.add_argument('-to', '--top', dest='top_attribute', default=None,
+                    type=int, help='Number of top pixels to keep unmasked.')
 parser.add_argument('-c', '--center', dest='center_attribute', default=None,
                     type=int, help='Number of central pixels to keep unmasked.')
 parser.add_argument('-e', '--edge', dest='edge_attribute', default=None,
                     type=int, help='Number of edge pixels to keep unmasked.')
 parser.add_argument('-l', '--left', dest='left_attribute', default=None,
                     type=int, help='Number of left pixels to keep unmasked.')
+parser.add_argument('-ri', '--right', dest='right_attribute', default=None,
+                    type=int, help='Number of right pixels to keep unmasked.')
 parser.add_argument('-rb', '--random-blob', dest='blob_attribute', default=None,
                     type=int, nargs='+', help='First int should be maximum number of blobs, second lower bound on num_iters and third upper bound on num_iters.')
 parser.add_argument('-mf', '--mask-folder', dest='folder_attribute', default=None,
@@ -75,12 +79,16 @@ if args.random_attribute is not None:
     mask_descriptors.append(('random', args.random_attribute))
 if args.bottom_attribute is not None:
     mask_descriptors.append(('bottom', args.bottom_attribute))
+if args.top_attribute is not None:
+    mask_descriptors.append(('top', args.top_attribute))
 if args.center_attribute is not None:
     mask_descriptors.append(('center', args.center_attribute))
 if args.edge_attribute is not None:
     mask_descriptors.append(('edge', args.edge_attribute))
 if args.left_attribute is not None:
     mask_descriptors.append(('left', args.left_attribute))
+if args.right_attribute is not None:
+    mask_descriptors.append(('right', args.right_attribute))
 if args.blob_attribute is not None:
     max_num_blobs, lower_iter, upper_iter = args.blob_attribute
     mask_descriptors.append(('random_blob', (max_num_blobs, (lower_iter, upper_iter), 0.5)))

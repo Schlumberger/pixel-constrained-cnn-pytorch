@@ -28,24 +28,30 @@ class MaskGenerator():
         2. ('bottom', int): Generates masks where only the bottom pixels are
             visible. The int determines the number of rows of the image to
             keep visible at the bottom.
-        3. ('center', int): Generates masks where only the central pixels
+        3. ('top', int): Generates masks where only the top pixels are
+            visible. The int determines the number of rows of the image to
+            keep visible at the top.
+        4. ('center', int): Generates masks where only the central pixels
             are visible. The int determines the size in pixels of the sides
             of the square of visible pixels of the image.
-        4. ('edge', int): Generates masks where only the edge pixels of the
+        5. ('edge', int): Generates masks where only the edge pixels of the
             image are visible. The int determines the thickness of the edges
             in pixels.
-        5. ('left', int): Generates masks where only the left pixels of the
+        6. ('left', int): Generates masks where only the left pixels of the
             image are visible. The int determines the number of columns
             in pixels which are visible.
-        6. ('random_rect', (int, int)): Generates random rectangular masks
+        7. ('right', int): Generates masks where only the right pixels of
+            the image are visible. The int determines the number of columns
+            in pixels which are visible.
+        8. ('random_rect', (int, int)): Generates random rectangular masks
             where the maximum height and width of the rectangles are
             determined by the two ints.
-        7. ('random_blob', (int, (int, int), float)): Generates random
+        9. ('random_blob', (int, (int, int), float)): Generates random
             blobs, where the number of blobs is determined by the first int,
             the range of iterations (see function definition) is determined
             by the tuple of ints and the threshold for making pixels visible
             is determined by the float.
-        8. ('random_blob_cache', (str, int)): Loads pregenerated random masks
+        10. ('random_blob_cache', (str, int)): Loads pregenerated random masks
             from a folder given by the string, using a batch_size given by
             the int.
     """
@@ -81,12 +87,16 @@ class MaskGenerator():
                 return batch_random_mask(self.img_size, num_visibles, batch_size)
         elif self.mask_type == 'bottom':
             return batch_bottom_mask(self.img_size, self.mask_attribute, batch_size)
+        elif self.mask_type == 'top':
+            return batch_top_mask(self.img_size, self.mask_attribute, batch_size)
         elif self.mask_type == 'center':
             return batch_center_mask(self.img_size, self.mask_attribute, batch_size)
         elif self.mask_type == 'edge':
             return batch_edge_mask(self.img_size, self.mask_attribute, batch_size)
         elif self.mask_type == 'left':
             return batch_left_mask(self.img_size, self.mask_attribute, batch_size)
+        elif self.mask_type == 'right':
+            return batch_right_mask(self.img_size, self.mask_attribute, batch_size)
         elif self.mask_type == 'random_rect':
             return batch_random_rect_mask(self.img_size, self.mask_attribute[0],
                                           self.mask_attribute[1], batch_size)
@@ -185,6 +195,25 @@ def batch_bottom_mask(img_size, num_rows, batch_size):
     return mask
 
 
+def batch_top_mask(img_size, num_rows, batch_size):
+    """Masks all the output except the |num_rows| highest rows (in the height
+    dimension).
+
+    Parameters
+    ----------
+    img_size : see single_random_mask
+
+    num_rows : int
+        Number of rows from top which will be visible.
+
+    batch_size : int
+        Number of masks to create.
+    """
+    mask = torch.zeros(batch_size, 1, *img_size[1:])
+    mask[:, :, :num_rows, :] = 1.
+    return mask
+
+
 def batch_center_mask(img_size, num_pixels, batch_size):
     """Masks all the output except the num_pixels by num_pixels central square
     of the image.
@@ -246,6 +275,24 @@ def batch_left_mask(img_size, num_cols, batch_size):
     """
     mask = torch.zeros(batch_size, 1, *img_size[1:])
     mask[:, :, :, :num_cols] = 1.
+    return mask
+
+
+def batch_right_mask(img_size, num_cols, batch_size):
+    """Masks all the pixels except the right side of the image.
+
+    Parameters
+    ----------
+    img_size : see single_random_mask
+
+    num_cols : int
+        Number of columns of the right side of the image to remain visible.
+
+    batch_size : int
+        Number of masks to create.
+    """
+    mask = torch.zeros(batch_size, 1, *img_size[1:])
+    mask[:, :, :, -num_cols:] = 1.
     return mask
 
 
