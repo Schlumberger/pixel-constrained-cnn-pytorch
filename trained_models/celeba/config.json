@@ -2,7 +2,7 @@
   "name": "0",
   "dataset": "celeba",
   "resize": 32,
-  "crop": 32,
+  "crop": 89,
   "grayscale": false,
   "batch_size": 64,
   "constrained": true,

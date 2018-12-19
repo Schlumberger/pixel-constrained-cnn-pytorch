@@ -27,17 +27,17 @@ The attributes of the model can be set in the `config.json` file. To train the m
 python main.py config.json
 ```
 
-This will also save the trained model and log various information as training progresses.
+This will also save the trained model and log various information as training progresses. Examples of `config.json` files are available in the `trained_models` directory.
 
 ### Inpainting
 
-To generate images with a trained model use `main_generate.py`. As an example, the following command generates 64 completions for images 73 and 84 in the CelebA dataset by conditioning on the top 16 rows. The model used to generate the completions is the trained CelebA model included in this repo and the results are saved to the `celeba_experiment` folder.
+To generate images with a trained model use `main_generate.py`. As an example, the following command generates 64 completions for images 73 and 84 in the MNIST dataset by conditioning on the top 14 rows. The model used to generate the completions is the trained MNIST model included in this repo and the results are saved to the `mnist_inpaintings` folder.
 
 ```
-python main_generate.py -n celeba_experiment -m trained_models/celeba -t generation -i 73 84 -to 16 -ns 64
+python main_generate.py -n mnist_inpaintings -m trained_models/mnist -t generation -i 73 84 -to 14 -ns 64
 ```
 
-For a full list of options, run `python main_generate.py --help`.
+For a full list of options, run `python main_generate.py --help`. Note that if you do not have the MNIST dataset on your machine it will be automatically downloaded when running the above command. The CelebA dataset will have to be manually downloaded (see the Data sources section). If you already have the datasets downloaded, you can change the paths in `utils/dataloaders.py` to point to the correct folders on your machine.
 
 ## Trained models
 
@@ -45,7 +45,7 @@ The trained models referenced in the paper are included in the `trained_models` 
 
 ## Data sources
 
-The MNIST dataset can be automatically downloaded using `torchvision`. All CelebA images were resized to 32 by 32 and can be found [here](http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html).
+The MNIST dataset can be automatically downloaded using `torchvision`. The CelebA dataset can be found [here](http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html).
 
 ## Citing
 

@@ -30,7 +30,7 @@ def mnist(batch_size=128, num_colors=256, size=28,
         transforms.Lambda(lambda x: quantize(x))
     ])
 
-    train_data = datasets.MNIST(path_to_data, train=True, download=False,
+    train_data = datasets.MNIST(path_to_data, train=True, download=True,
                                 transform=all_transforms)
     test_data = datasets.MNIST(path_to_data, train=False,
                                transform=all_transforms)
@@ -41,9 +41,11 @@ def mnist(batch_size=128, num_colors=256, size=28,
     return train_loader, test_loader
 
 
-def celeba(batch_size=128, num_colors=256, size=64, crop=64, grayscale=False,
-           shuffle=True, path_to_data='../celeba_64'):
-    """CelebA dataloader with (64, 64) images.
+def celeba(batch_size=128, num_colors=256, size=178, crop=178, grayscale=False,
+           shuffle=True, path_to_data='../celeba_data'):
+    """CelebA dataloader with square images. Note original CelebA images have
+    shape (218, 178), this dataloader center crops these images to be (178, 178)
+    by default.
 
     Parameters
     ----------
@@ -54,7 +56,7 @@ def celeba(batch_size=128, num_colors=256, size=64, crop=64, grayscale=False,
         lower for e.g. binary images.
 
     size : int
-        Size (height and width) of each image. Default is 64 for no resizing.
+        Size (height and width) of each image.
 
     crop : int
         Size of center crop. This crop happens *before* the resizing.
@@ -66,7 +68,7 @@ def celeba(batch_size=128, num_colors=256, size=64, crop=64, grayscale=False,
         If True shuffles images.
 
     path_to_data : string
-        Path to 64 by 64 CelebA data files.
+        Path to CelebA image files.
     """
     quantize = get_quantize_func(num_colors)
 
@@ -93,12 +95,12 @@ def celeba(batch_size=128, num_colors=256, size=64, crop=64, grayscale=False,
 
 
 class CelebADataset(Dataset):
-    """CelebA dataset with 64 by 64 images.
+    """CelebA dataset.
 
     Parameters
     ----------
     path_to_data : string
-        Path to 64 by 64 CelebA data files.
+        Path to CelebA images.
 
     subsample : int
         Only load every |subsample| number of images.
