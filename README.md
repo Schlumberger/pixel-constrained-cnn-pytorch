@@ -69,4 +69,4 @@ If you find this work useful in your research, please cite using:
 
 ## License
 
-MIT
+[Apache License 2.0](LICENSE)
