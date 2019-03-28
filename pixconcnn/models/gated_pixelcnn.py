@@ -142,7 +142,7 @@ class GatedPixelCNN(PixelCNNBaseClass):
 
         self.depth = depth
         self.filter_size = filter_size
-        self.padding = (filter_size - 1) / 2
+        self.padding = (filter_size - 1) // 2
         self.img_size = img_size
         self.num_channels = img_size[0]
         self.num_colors = num_colors
