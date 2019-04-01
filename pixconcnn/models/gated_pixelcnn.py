@@ -71,7 +71,7 @@ class PixelCNNBaseClass(nn.Module):
             return samples.cpu()
 
     def log_likelihood(self, device, samples):
-        """Calculates log likelihood of samples under model.
+        """Calculates log likelihood (in nats) of samples under model.
 
         Parameters
         ----------
@@ -83,10 +83,6 @@ class PixelCNNBaseClass(nn.Module):
         """
         # Set model to evaluation mode
         self.eval()
-
-        num_samples, num_channels, height, width = samples.size()
-        log_probs = torch.zeros(num_samples)
-        log_probs = log_probs.to(device)
 
         # Normalize samples before passing through model
         norm_samples = samples.float() / (self.num_colors - 1)
