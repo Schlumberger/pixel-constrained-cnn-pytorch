@@ -94,7 +94,7 @@ class PixelCNNBaseClass(nn.Module):
         logits = self.forward(norm_samples)
         # Note that probs has shape
         # (batch, num_colors, channels, height, width)
-        probs = F.softmax(logits, dim=1)
+        probs = F.log_softmax(logits, dim=1)
 
         # Calculate probability of each pixel
         for i in range(height):
@@ -103,9 +103,9 @@ class PixelCNNBaseClass(nn.Module):
                     # Get the batch of true values at pixel (k, i, j)
                     true_vals = samples[:, k, i, j]
                     # Get probability assigned by model to true pixel
-                    probs_pixel = probs[:, true_vals, k, i, j][:, 0]
-                    # Add log probs (1e-9 to avoid log(0))
-                    log_probs += torch.log(probs_pixel + 1e-9)
+                    all_probs_pixel = probs[:, :, k, i, j]
+                    probs_pixel = all_probs_pixel.gather(dim=1, index=true_vals.unsqueeze(1).expand_as(all_probs_pixel))[:, 0]
+                    log_probs += probs_pixel
 
         # Reset model to train mode
         self.train()
