@@ -92,20 +92,9 @@ class PixelCNNBaseClass(nn.Module):
         norm_samples = samples.float() / (self.num_colors - 1)
         # Calculate pixel probs according to the model
         logits = self.forward(norm_samples)
-        # Note that probs has shape
-        # (batch, num_colors, channels, height, width)
-        probs = F.log_softmax(logits, dim=1)
 
-        # Calculate probability of each pixel
-        for i in range(height):
-            for j in range(width):
-                for k in range(num_channels):
-                    # Get the batch of true values at pixel (k, i, j)
-                    true_vals = samples[:, k, i, j]
-                    # Get probability assigned by model to true pixel
-                    all_probs_pixel = probs[:, :, k, i, j]
-                    probs_pixel = all_probs_pixel.gather(dim=1, index=true_vals.unsqueeze(1).expand_as(all_probs_pixel))[:, 0]
-                    log_probs += probs_pixel
+        all_log_probs = -F.cross_entropy(logits, samples, reduction="none")
+        log_probs = all_log_probs.sum((1, 2, 3))
 
         # Reset model to train mode
         self.train()
