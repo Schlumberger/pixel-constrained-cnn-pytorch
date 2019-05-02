@@ -4,9 +4,12 @@ Pytorch implementation of [Probabilistic Semantic Inpainting with Pixel Constrai
 
 This repo contains an implementation of Pixel Constrained CNN, a framework for performing probabilistic inpainting of images with arbitrary occlusions. It also includes all code to reproduce the experiments in the paper as well as the weights of the trained models.
 
+For a TensorFlow implementation, see this [repo](https://github.com/Schlumberger/pixel-constrained-cnn-tf).
+
 ## Examples
 
 <img src="https://github.com/Schlumberger/pixel-constrained-cnn-pytorch/raw/master/imgs/summary-gif.gif" width="600">
+<img src="https://github.com/Schlumberger/pixel-constrained-cnn-pytorch/raw/master/imgs/probinpainting.gif" width="400">
 <img src="https://github.com/Schlumberger/pixel-constrained-cnn-pytorch/raw/master/imgs/new-top-celeba.png" width="400">
 <img src="https://github.com/Schlumberger/pixel-constrained-cnn-pytorch/raw/master/imgs/new-left-celeba.png" width="400">
 <img src="https://github.com/Schlumberger/pixel-constrained-cnn-pytorch/raw/master/imgs/new-small-missing-celeba.png" width="400">
