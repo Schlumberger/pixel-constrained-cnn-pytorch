@@ -71,7 +71,7 @@ class PixelCNNBaseClass(nn.Module):
             return samples.cpu()
 
     def log_likelihood(self, device, samples):
-        """Calculates log likelihood of samples under model.
+        """Calculates log likelihood (in nats) of samples under model.
 
         Parameters
         ----------
@@ -84,28 +84,13 @@ class PixelCNNBaseClass(nn.Module):
         # Set model to evaluation mode
         self.eval()
 
-        num_samples, num_channels, height, width = samples.size()
-        log_probs = torch.zeros(num_samples)
-        log_probs = log_probs.to(device)
-
         # Normalize samples before passing through model
         norm_samples = samples.float() / (self.num_colors - 1)
         # Calculate pixel probs according to the model
         logits = self.forward(norm_samples)
-        # Note that probs has shape
-        # (batch, num_colors, channels, height, width)
-        probs = F.softmax(logits, dim=1)
 
-        # Calculate probability of each pixel
-        for i in range(height):
-            for j in range(width):
-                for k in range(num_channels):
-                    # Get the batch of true values at pixel (k, i, j)
-                    true_vals = samples[:, k, i, j]
-                    # Get probability assigned by model to true pixel
-                    probs_pixel = probs[:, true_vals, k, i, j][:, 0]
-                    # Add log probs (1e-9 to avoid log(0))
-                    log_probs += torch.log(probs_pixel + 1e-9)
+        all_log_probs = -F.cross_entropy(logits, samples, reduction="none")
+        log_probs = all_log_probs.sum((1, 2, 3))
 
         # Reset model to train mode
         self.train()
