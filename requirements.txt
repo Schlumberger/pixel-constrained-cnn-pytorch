@@ -2,5 +2,5 @@ imageio==2.4.1
 matplotlib==2.2.3
 numpy==1.11.2
 Pillow==6.2.0
-torch==0.4.1
+torch==1.13.1
 torchvision==0.2.1
